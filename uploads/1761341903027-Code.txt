@@ -1,0 +1,60 @@
+mjhe ek prompt do likh k AI claude k liye 
+mjhe ek web Application bnani he MERN stack pe jis me kuch ye kaam hona he
+k us me 2 user hongay ek Admin or ek Employee k ek sab se pehlay web khole gi to Login page ayega us me Admin apni detail dale ga to Admin apne panel me chala jayega or jab Employee apni detail dale ga to wo apne panel me chala jaye ga or sab ka alag alag panel hoga sare employee ka k jese Asad ne apni credential dali to wo apne dashboard pe chala jayega jaha us ko wo sab chezen nazar ayegi jo sirf ussi k liye hongior koi or jab login karega us ko wo show nahi ho ga us dusre bande ko apna kaam show hoga 
+kaam kia hoga k ager Admin apne panel se koi bhi kaam kisi employee ko deta he jese koi Document, Image, PDF, ya kuch bhi jo admin pane pass se upload karega ya likhega wo sirf ussi employee ko show hoga jis ko wo Assign kr raha hon or sath hi ek Email ka box bhi hoga k ager admin kisi bhi employee ko Email dena chahye to Admin apne pass us bande ka record khole to or us ko email likh k dede jo sirf ussi employee/bande ko show hogi or wo employee us ka replay ya koi or email admin ko bhi likh k de sakta he or wo admin k pass show ho jayegi.
+sath hi ye bhi hoga k jese admin ne ek employee ko koi task assign kia to us ka date, time, month, year sab note ho jaye or jese hi employee us task ko complete karta he to wo apne portal se us pe mark/tick esa koi neshan lga dena k mene ye task kr lia he or wo admin ko submit kar dega sath hi ager us ko koi document, image, PDF etc attached karni ho to wo kar sakte admin bhi or employee bhi 
+
+ab mjhe is ka acha sa prompt likh k do 
+
+
+
+multitech-word/
+│
+├── backend/
+│   ├── models/
+│   │   ├── User.js
+│   │   ├── Task.js
+│   │   └── Message.js
+│   │
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── tasks.js
+│   │   ├── messages.js
+│   │   └── admin.js
+│   │
+│   ├── middleware/
+│   │   └── auth.js
+│   │
+│   ├── uploads/
+│   │   └── (uploaded files stored here)
+│   │
+│   ├── .env
+│   ├── server.js
+│   ├── package.json
+│   └── node_modules/
+│
+└── frontend/
+    ├── public/
+    │   ├── index.html
+    │   └── favicon.ico
+    │
+    ├── src/
+    │   ├── components/
+    │   │   └── PrivateRoute.js
+    │   │
+    │   ├── context/
+    │   │   └── AuthContext.js
+    │   │
+    │   ├── pages/
+    │   │   ├── Login.js
+    │   │   ├── AdminDashboard.js
+    │   │   └── EmployeeDashboard.js
+    │   │
+    │   ├── App.js
+    │   ├── index.js
+    │   └── index.css
+    │
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    ├── package.json
+    └── node_modules/
