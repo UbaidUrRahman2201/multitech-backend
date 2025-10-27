@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // ✅ CORS for production
 app.use(cors({
   origin: [
-    "https://multitech-frontend.vercel.app"  // 👈 your frontend domain
+    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
@@ -35,7 +35,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 const io = socketIo(server, {
   cors: {
     origin: [
-      "https://multitech-frontend.vercel.app"
+      "https://multitech-frontend.vercel.app/login"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
