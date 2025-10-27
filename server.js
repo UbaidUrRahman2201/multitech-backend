@@ -13,12 +13,12 @@ const server = http.createServer(app);
 
 // ✅ CORS for production
 app.use(cors({
-  origin: [
-    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
-  ],
+  origin: /vercel\.app$/,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
+
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -34,9 +34,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
-    origin: [
-      "https://multitech-frontend.vercel.app/login"
-    ],
+    origin: /vercel\.app$/,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
