@@ -11,14 +11,20 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ✅ CORS for production
+// ✅ CORS setup (Fixed)
 app.use(cors({
   origin: [
-    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
+    "https://multitech-frontend.vercel.app",        // ✅ correct frontend domain
+    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app", // ✅ alternate vercel preview link
+    "http://localhost:3000"                         // ✅ for local testing
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
+// ✅ Allow preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -29,29 +35,32 @@ mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
 })
 .then(() => console.log('✅ MongoDB Connected'))
-.catch((err) => console.error('❌ MongoDB Connection Error:', err));
+.catch((err) => console.error('❌ MongoDB Connection Error:', err.message));
 
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
     origin: [
-      "https://multitech-frontend.vercel.app/login"
+      "https://multitech-frontend.vercel.app",
+      "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
+      "http://localhost:3000"
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
   }
 });
 
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
+  console.log('✅ User connected:', socket.id);
 
   socket.on('join', (userId) => {
     socket.join(userId);
-    console.log(`User ${userId} joined their room`);
+    console.log(`📡 User ${userId} joined their room`);
   });
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    console.log('❌ User disconnected:', socket.id);
   });
 });
 
@@ -68,10 +77,10 @@ app.get('/', (req, res) => {
   res.json({ message: '🚀 MultiTechWorld API Running on Vercel' });
 });
 
-// ✅ Export app (required by Vercel)
+// ✅ Export app for Vercel
 module.exports = app;
 
-// ✅ If running locally, start the server manually
+// ✅ Run locally only
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
