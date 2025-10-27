@@ -11,13 +11,13 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ✅ Update CORS for production
+// ✅ CORS for production
 app.use(cors({
   origin: [
-    "http://localhost:3000",
-    "https://multitech-frontend.vercel.app" // change to your actual frontend vercel domain
+    "https://multitech-frontend.vercel.app" // 👈 your frontend domain
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"]
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 
 app.use(express.json());
@@ -35,10 +35,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 const io = socketIo(server, {
   cors: {
     origin: [
-      "http://localhost:3000",
       "https://multitech-frontend.vercel.app"
     ],
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   }
 });
 
@@ -66,7 +66,6 @@ app.use('/api/admin', require('./routes/admin'));
 // ✅ Test route
 app.get('/', (req, res) => {
   res.json({ message: '🚀 MultiTechWorld API Running on Vercel' });
-  mongoose.connect(process.env.MONGODB_URI)
 });
 
 // ✅ Export app (required by Vercel)
@@ -79,4 +78,3 @@ if (require.main === module) {
     console.log(`🚀 Server running locally on port ${PORT}`);
   });
 }
-
