@@ -13,10 +13,12 @@ const server = http.createServer(app);
 
 // ✅ CORS for production
 app.use(cors({
-  origin: [
-    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
+   origin: [
+    "https://multitech-frontend.vercel.app",  // your deployed frontend
+    "http://localhost:3000"                   // for local testing (optional)
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
@@ -34,11 +36,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
-    origin: [
-      "https://multitech-frontend.vercel.app/login"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
+     origin: [
+    "https://multitech-frontend.vercel.app",  // your deployed frontend
+    "http://localhost:3000"                   // for local testing (optional)
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
   }
 });
 
@@ -56,6 +60,8 @@ io.on('connection', (socket) => {
 });
 
 app.set('io', io);
+app.options('*', cors());
+
 
 // ✅ API routes
 app.use('/api/auth', require('./routes/auth'));
