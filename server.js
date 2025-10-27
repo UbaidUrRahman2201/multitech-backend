@@ -15,6 +15,7 @@ const server = http.createServer(app);
 app.use(cors({
    origin: [
     "https://multitech-frontend.vercel.app",  // your deployed frontend
+    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
     "http://localhost:3000"                   // for local testing (optional)
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -55,6 +56,7 @@ const io = socketIo(server, {
   cors: {
      origin: [
     "https://multitech-frontend.vercel.app",  // your deployed frontend
+    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
     "http://localhost:3000"                   // for local testing (optional)
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
