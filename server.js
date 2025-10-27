@@ -11,56 +11,63 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ✅ CORS setup (Fixed)
-app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      'https://multitech-frontend.vercel.app',
-      'http://localhost:3000'
-    ];
+/* ✅ CORS Setup (Supports production, preview, and local) */
+const allowedOrigins = [
+  'https://multitech-frontend.vercel.app', // main production
+  'http://localhost:3000' // local testing
+];
 
-    // Allow all Vercel preview URLs dynamically
-    if (origin && (
+// Allow all Vercel preview URLs dynamically
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow mobile/postman
+    if (
       allowedOrigins.includes(origin) ||
       /^https:\/\/multitech-frontend-[a-z0-9-]+\.vercel\.app$/.test(origin)
-    )) {
+    ) {
       callback(null, true);
     } else {
+      console.warn('❌ CORS blocked for origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
 
-
-// ✅ Allow preflight requests
-app.options('*', cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ Connect MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('✅ MongoDB Connected'))
-.catch((err) => console.error('❌ MongoDB Connection Error:', err.message));
+/* ✅ MongoDB Connection */
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err.message));
 
-// ✅ Socket.io setup
+/* ✅ Socket.io Setup */
 const io = socketIo(server, {
   cors: {
-    origin: [
-      "https://multitech-frontend.vercel.app",
-      "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
-      "http://localhost:3000"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
-  }
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /^https:\/\/multitech-frontend-[a-z0-9-]+\.vercel\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  },
 });
 
 io.on('connection', (socket) => {
@@ -78,21 +85,21 @@ io.on('connection', (socket) => {
 
 app.set('io', io);
 
-// ✅ API routes
+/* ✅ API Routes */
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/admin', require('./routes/admin'));
 
-// ✅ Test route
+/* ✅ Test Route */
 app.get('/', (req, res) => {
   res.json({ message: '🚀 MultiTechWorld API Running on Vercel' });
 });
 
-// ✅ Export app for Vercel
+/* ✅ Export for Vercel */
 module.exports = app;
 
-// ✅ Run locally only
+/* ✅ Local Development */
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
