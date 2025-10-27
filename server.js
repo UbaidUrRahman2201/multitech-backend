@@ -12,13 +12,22 @@ const app = express();
 const server = http.createServer(app);
 
 // ✅ CORS for production
+const allowedOrigins = [
+  "https://multitech-frontend.vercel.app",
+  "https://multitech-frontend-9sfl4lcee-ubaidurrahman2201s-projects.vercel.app"
+];
+
 app.use(cors({
-  origin: /vercel\.app$/,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
-
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -34,7 +43,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
-    origin: /vercel\.app$/,
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
@@ -69,7 +78,7 @@ app.get('/', (req, res) => {
 // ✅ Export app (required by Vercel)
 module.exports = app;
 
-// ✅ If running locally, start the server manually
+// ✅ If running locally
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
