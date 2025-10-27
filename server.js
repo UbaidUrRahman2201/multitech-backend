@@ -13,21 +13,26 @@ const server = http.createServer(app);
 
 // ✅ CORS for production
 const allowedOrigins = [
-  "https://multitech-frontend.vercel.app",
-  "https://multitech-frontend-9sfl4lcee-ubaidurrahman2201s-projects.vercel.app"
+  "https://multitech-frontend.vercel.app", // main domain
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      /\.vercel\.app$/.test(origin)
+    ) {
       callback(null, true);
     } else {
+      console.log("❌ Blocked by CORS:", origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -43,11 +48,22 @@ mongoose.connect(process.env.MONGODB_URI, {
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /\.vercel\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
+
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
