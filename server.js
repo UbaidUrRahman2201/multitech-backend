@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const dotenv = require ('dotenv');
 
 dotenv.config();
 
@@ -80,5 +79,4 @@ if (require.main === module) {
     console.log(`🚀 Server running locally on port ${PORT}`);
   });
 }
-dotenv.config();
 
