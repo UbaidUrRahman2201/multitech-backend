@@ -13,32 +13,12 @@ const server = http.createServer(app);
 
 // ✅ CORS for production
 app.use(cors({
-   origin: [
-    "https://multitech-frontend.vercel.app",  // your deployed frontend
-    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
-    "http://localhost:3000"                   // for local testing (optional)
+  origin: [
+    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
   ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
-
-
-// ✅ Ensure all responses include proper CORS headers
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://multitech-frontend.vercel.app");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
-
-
 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -54,14 +34,11 @@ mongoose.connect(process.env.MONGODB_URI, {
 // ✅ Socket.io setup
 const io = socketIo(server, {
   cors: {
-     origin: [
-    "https://multitech-frontend.vercel.app",  // your deployed frontend
-    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app",
-    "http://localhost:3000"                   // for local testing (optional)
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+    origin: [
+      "https://multitech-frontend.vercel.app/login"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
   }
 });
 
@@ -79,8 +56,6 @@ io.on('connection', (socket) => {
 });
 
 app.set('io', io);
-app.options('*', cors());
-
 
 // ✅ API routes
 app.use('/api/auth', require('./routes/auth'));
