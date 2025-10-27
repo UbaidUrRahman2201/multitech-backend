@@ -11,34 +11,15 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-/* ✅ CORS Setup (Supports production, preview, and local) */
-const allowedOrigins = [
-      "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain, // main production
-];
+// ✅ CORS for production
+app.use(cors({
+  origin: [
+    "https://multitech-frontend.vercel.app/login"  // 👈 your frontend domain
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
-// Allow all Vercel preview URLs dynamically
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow mobile/postman
-    if (
-      allowedOrigins.includes(origin) ||
-      /^https:\/\/multitech-frontend-[a-z0-9-]+\.vercel\.app$/.test(origin)
-    ) {
-      callback(null, true);
-    } else {
-      console.warn('❌ CORS blocked for origin:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
-
-
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
