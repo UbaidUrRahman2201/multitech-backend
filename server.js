@@ -13,15 +13,27 @@ const server = http.createServer(app);
 
 // ✅ CORS setup (Fixed)
 app.use(cors({
-  origin: [
-    "https://multitech-frontend.vercel.app",        // ✅ correct frontend domain
-    "https://multitech-frontend-1gxsyctc9-ubaidurrahman2201s-projects.vercel.app", // ✅ alternate vercel preview link
-    "http://localhost:3000"                         // ✅ for local testing
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'https://multitech-frontend.vercel.app',
+      'http://localhost:3000'
+    ];
+
+    // Allow all Vercel preview URLs dynamically
+    if (origin && (
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/multitech-frontend-[a-z0-9-]+\.vercel\.app$/.test(origin)
+    )) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
 
 // ✅ Allow preflight requests
 app.options('*', cors());
