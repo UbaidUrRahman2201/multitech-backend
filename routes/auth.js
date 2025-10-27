@@ -6,7 +6,7 @@ const { protect } = require('../middleware/auth');
 
 // Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'defaultsecret', {
     expiresIn: '30d',
   });
 };
@@ -36,6 +36,7 @@ router.post('/register', async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
+    console.error("Register Error:", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -55,7 +56,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.json({
+    res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -63,13 +64,18 @@ router.post('/login', async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
+    console.error("Login Error:", error);
     res.status(500).json({ message: error.message });
   }
 });
 
 // Get current user
 router.get('/me', protect, async (req, res) => {
-  res.json(req.user);
+  try {
+    res.json(req.user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 module.exports = router;
