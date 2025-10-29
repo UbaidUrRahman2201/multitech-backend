@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Task = require('../models/Task');
 const { protect, adminOnly } = require('../middleware/auth');
-const upload = require('../config/cloudinary'); // ✅ only this one
-
+const upload = require('../config/cloudinary'); // ✅ only one upload
 
 // ---------------------
 // Create Task (Admin only)
