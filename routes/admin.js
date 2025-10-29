@@ -39,21 +39,22 @@ router.get('/stats', protect, adminOnly, async (req, res) => {
   }
 });
 
-// Create employee
+// Create employee or admin
 router.post('/employees', protect, adminOnly, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body; // 👈 role include kiya
 
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // ✅ Save role from request (default: Employee)
     const user = await User.create({
       name,
       email,
       password,
-      role: 'Employee',
+      role: role || 'Employee', // 👈 agar frontend se na aye to Employee
     });
 
     res.status(201).json({
@@ -66,6 +67,7 @@ router.post('/employees', protect, adminOnly, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Delete employee
 router.delete('/employees/:id', protect, adminOnly, async (req, res) => {
