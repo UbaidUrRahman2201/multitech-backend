@@ -11,11 +11,10 @@ router.post('/', protect, adminOnly, upload.array('files', 5), async (req, res) 
   try {
     const { title, description, assignedTo } = req.body;
 
-    const files = req.files ? req.files.map(file => ({
+    const files = req.files.map(file => ({
       filename: file.originalname,
-      path: file.path, // Cloudinary returns URL here
-      uploadDate: Date.now(),
-    })) : [];
+      path: file.path, // Cloudinary URL hoti hai ab
+    }));
 
     const task = await Task.create({
       title,
@@ -29,16 +28,17 @@ router.post('/', protect, adminOnly, upload.array('files', 5), async (req, res) 
       .populate('assignedTo', 'name email')
       .populate('assignedBy', 'name email');
 
-    // Notify employee via socket
     const io = req.app.get('io');
     io.to(assignedTo).emit('newTask', populatedTask);
 
     res.status(201).json(populatedTask);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
 
 // ---------------------
 // Upload completion files
