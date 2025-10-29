@@ -9,10 +9,10 @@ cloudinary.config({
 });
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
-    folder: 'multitechworld_tasks',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'docx'],
+    folder: 'uploads', // Folder name in Cloudinary
+    allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
 
